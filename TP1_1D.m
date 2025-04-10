@@ -1,8 +1,5 @@
-%%writefile nivel_agua_DLQR.m
-%%TP1 Ejercicio 1, iniciso 4
-%pkg load control signal;
+%TP1 Ejercicio 1, iniciso 4
 clc; clear all; close all;
-
 %componentes
 A1=1;
 A2=1;
@@ -10,7 +7,6 @@ R1=1/2;
 R2=1/3;
 h1(1)=0;
 h2(1)=0;
-
 %matrices del espacio de estados (ss)
 A=[-1/(A1*R1) 1/(A1*R1); 1/(A2*R1) -(1/(A2*R1)+1/(A2*R2))]
 B=[1/A1; 0]
@@ -27,12 +23,11 @@ h=Ts/20;
 muestras=1000;
 t = 0:h:(muestras*Ts);
 i=1; k=0;
-referencia=1; %%altura en metros del tanque 2
+referencia=1; %altura en metros del tanque 2
 
-
-%%DLQR
-%%Primero discretizamos el sistema como:
-sys_D=c2d(sys,Ts,'zoh'); %%Ac· va Ts.
+%DLQR
+%Primero discretizamos el sistema como:
+sys_D=c2d(sys,Ts,'zoh'); %Ac√° va Ts.
 Ad  = sys_D.a;
 Bd  = sys_D.b;
 Ctd = sys_D.c;
@@ -43,7 +38,6 @@ B_ampd=[Bd;-Ctd*Bd]
 
 Qd  = diag([10 .01 1000])
 Rd   = 1000
-
 
 Kd=dlqr(A_ampd,B_ampd,Qd,Rd);
 psi=0;
@@ -71,12 +65,8 @@ for ki=1:muestras
 
   end 
 u(i)=u1(ki);
-%Imprimo como varÌan mis variables de estado y mi entrada
-%figure 1;
+%Imprimo como var√≠an mis variables de estado y mi entrada
 subplot(3,1,1) ;plot(t,h1); title('altura del primer tanque'); grid on;
 subplot(3,1,2) ;plot(t,h2); grid on; hold;
 step(sys,t,'r'), legend('altura controlada','altura sin controlador'); title('altura del segundo tanque');
 subplot(3,1,3) ;plot(t,u); title('caudal');grid on;
-
-
-%print -dpng nivel_agua_DLQR.png
