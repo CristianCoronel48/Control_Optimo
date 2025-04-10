@@ -1,8 +1,5 @@
-%%writefile nivel_agua_LQR.m
-%%TP1 Ejercicio 1, iniciso 3
-%pkg load control signal;
+%TP1 Ejercicio 1, iniciso 3
 clc; clear all; close all;
-
 %componentes
 A1=1;
 A2=1;
@@ -22,22 +19,19 @@ sys=tf(num,den);
 Y(1)=0;
 
 %Variables de utilidad
-%%Para determinar h se hace lo siguiente:
-f=max(abs(pole(sys)))%%Esto nos imprime la frecuencia del polo m·s alta del sistema.
-
+%Para determinar h se hace lo siguiente:
+f=max(abs(pole(sys)))%Esto nos imprime la frecuencia del polo m√°s alta del sistema.
 %Como por el teorema del muestreo, tenemos que muestrear al doble de esa frecuencia
-%determinamos h como 1/10f, donde f es la frecuencia m·s alta
+%determinamos h como 1/10f, donde f es la frecuencia m√°s alta
 h=1/(10*f) %El h como yo
 tiempo=(10/h);
 t=0:h:(tiempo*h);
 i=1; k=0;
-referencia=1; %%altura en metros del tanque 2
+referencia=1; %altura en metros del tanque 2
 
-
-%%LQR
+%LQR
 Q=diag([10 0.1 100])
 R=1
-
 A_amp=[A zeros(2,1); -Ct 0]
 B_amp=[B(:,1);0]
 K=lqr(A_amp,B_amp,Q,R);
@@ -51,18 +45,14 @@ while(i<(tiempo+2))
   accion(i)=u;
   X_P=A*X+B*u;%X punto
   psi=psi+h*(referencia-Ct*X);
-  X=X+h*X_P;%Esto es el c·lculo de la integral como sumatoria
+  X=X+h*X_P;%Esto es el c√°lculo de la integral como sumatoria
 
   i=i+1;
 
 end
 
-%Imprimo como varÌan mis variables de estado y mi entrada
-%figure 1;
+%Imprimo como var√≠an mis variables de estado y mi entrada
 subplot(3,1,1) ;plot(t,h1); title('altura del primer tanque'); grid on;
 subplot(3,1,2) ;plot(t,h2); grid on; hold;
 step(sys,t,'r'), legend('altura controlada','altura sin controlador'); title('altura del segundo tanque');
 subplot(3,1,3) ;plot(t,accion); title('caudal');grid on;
-
-
-%print -dpng nivel_agua_LQR.png
