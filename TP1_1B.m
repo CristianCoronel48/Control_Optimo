@@ -1,8 +1,5 @@
-%%writefile nivel_agua_polos.m
-%%TP1 Ejercicio 1, iniciso 2
-%pkg load control signal;
+%TP1 Ejercicio 1, iniciso 2
 clc; clear all; close all;
-
 %componentes
 A1=1;
 A2=1;
@@ -10,7 +7,6 @@ R1=1/2;
 R2=1/3;
 h1(1)=0;
 h2(1)=0;
-
 %matrices del espacio de estados (ss)
 A=[-1/(A1*R1) 1/(A1*R1); 1/(A2*R1) -(1/(A2*R1)+1/(A2*R2))]
 B=[1/A1; 0]
@@ -24,24 +20,22 @@ sys=tf(num,den);
 A_amp= [A zeros(2,1); -Ct 0]
 B_amp= [B(:,1);0]
 
-%%Diseño de la ubicacion de los polos
+%DiseÃ±o de la ubicacion de los polos
 P= [-1.5+j -1.5-j -1]; %Polos deseados
-K=place(A_amp,B_amp,P) %%Ganancia de realimentacion
-
+K=place(A_amp,B_amp,P) %Ganancia de realimentacion
 Acl=A_amp-B_amp*K; %realimentacion del sistema
-eig(Acl) %%Comprobamos que los plos estan donde queremos
+eig(Acl) %Comprobamos que los polos estan donde queremos
 
 %Variables de utilidad
-%%Para determinar h se hace lo siguiente:
-f=max(abs(pole(sys)))%%Esto nos imprime la frecuencia del polo más alta del sistema.
-
+%Para determinar h se hace lo siguiente:
+f=max(abs(pole(sys)))%Esto nos imprime la frecuencia del polo mÃ¡s alta del sistema.
 %Como por el teorema del muestreo, tenemos que muestrear al doble de esa frecuencia
-%determinamos h como 1/10f, donde f es la frecuencia más alta
+%determinamos h como 1/10f, donde f es la frecuencia mÃ¡s alta
 h=1/(2*f)
 tiempo=(10/h);
 t=0:h:(tiempo*h);
 i=1;
-referencia=1; %%altura en metros del tanque 2
+referencia=1; %altura en metros del tanque 2
 psi=0; %Error integrado
 
 while(i<(tiempo+2))
@@ -53,7 +47,7 @@ while(i<(tiempo+2))
   accion(i)=u;
 
   X_P=A*X+B*u;%X punto
-  X=X+h*X_P;%Esto es el cálculo de la integral como sumatoria
+  X=X+h*X_P;%Esto es el cÃ¡lculo de la integral como sumatoria
 
   psi=psi+h*(referencia-Ct*X);
 
@@ -61,12 +55,8 @@ while(i<(tiempo+2))
 
 end
 
-%Imprimo como varían mis variables de estado y mi entrada
-%figure 1;
+%Imprimo como varÃ­an mis variables de estado y mi entrada
 subplot(3,1,1) ;plot(t,h1); title('altura del primer tanque'); grid on;
 subplot(3,1,2) ;plot(t,h2); title('altura del segundo tanque');grid on; hold;
 step(sys,'color','r'), legend('altura controlada','altura sin controlador');
 subplot(3,1,3) ;plot(t,accion,'linewidth',2); title('caudal');grid on;
-
-
-%print -dpng nivel_agua_polos.png
